@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="get">
+<head>
+	<meta charset="UTF-8">
+	<title>get</title>
+	<script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+	<script>
+		var app=angular.module('get',[]);
+		/*app.controller('ctrl',function($scope,$http){
+			//$http.get(url,{params});
+			$http.get('get.php',{
+				params:{a:10,b:20},
+				responseType:'json'//后台返回的数据类型为字符串，需要自己指定返回类型为json，或者用JSON.parse处理数据
+			}).then(function(res){
+				console.log('success');
+				console.log(res);
+				console.log(res.data+30);
+			},function(){
+				console.log('error');
+			});
+		});*/
+
+		app.controller('ctrl',function($scope,$http){
+			$http.get('get.php',{
+				params:{a:10,b:20},
+				responseType:'json'
+			}).success(function(res){
+				console.log('success');
+				console.log(res);
+				console.log(res+30);
+			}).error(function(){
+				console.log('error');
+			});
+		});
+	</script>
+</head>
+<body ng-controller="ctrl">
+	
+</body>
+</html>

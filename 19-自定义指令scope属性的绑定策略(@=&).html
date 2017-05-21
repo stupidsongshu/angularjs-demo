@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>自定义指令scope属性</title>
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body>
+	<div ng-controller="ctrl">
+		{{parentString}}<br>
+		{{parentBooks}}
+		<hr>
+
+		<div book-list1 scope1="{{parentString}}"></div>
+
+		<hr>
+
+		<div book-list2 scope2="parentBooks"></div>
+
+		<hr>
+
+		<div book-list3 scope3="parentBooks"></div>
+
+		<hr>
+
+		<direct show="showName(name)"></direct>
+	</div>
+
+	
+
+	<script>
+		/*
+		 * scope:为当前指令创建一个新的作用域而不是使之继承父作用域
+		 * (1)scope:false时继承父元素的作用域
+		 * (2)scope:true时创建一个新的作用域
+		 * (3)scope为对象时创建一个独立的作用域
+		 * (3.1)scope为对象且参数为@时:(单向绑定)只能读取父作用域里的值
+		 * (3.2)scope为对象且参数为=时:(双向绑定)作用域的属性与父作用域的属性进行双向绑定，任何一方的修改均影响到对方
+		 * (3.3)scope为对象且参数为&时:(作用域把父作用域的属性包装成一个函数，从而以函数的方式读写父作用域的属性)对父级作用域进行绑定，并将其中的属性包装成一个函数，注意，是属性，意即，任何类型的属性都会被包装成一个函数，比如一个单纯的字符串，或是一个对象数组，或是一个函数方法，如果是字符串、对象数组和无参的函数，那么可想而知，它们都会被包装成一个无参的函数，若是有参的函数方法则反之，并且我们需要为其传入一个对象。
+		 * (3.4)@是针对字符串而用,=是针对某个对象的引用(同时在DOM元素中属性值写法有区别)
+		 */
+		var app = angular.module('app',[])
+				.controller('ctrl',['$scope',function($scope){
+					console.log($scope);
+
+					$scope.parentString = 'use @ to bind parent strings';
+					
+					$scope.parentBooks = [
+						{
+							name : 'HTML'
+						},
+						{
+							name : 'CSS'
+						},
+						{
+							name : 'javascript'
+						}
+					];
+
+					$scope.showName=function(name){ 
+			          	alert(name);
+			        }
+
+				}])
+
+				.directive('bookList1',function(){
+					return {
+						restrict : "ECMA",
+						template : '<span>{{a}}</span>',
+						replace : true,
+						scope : {
+							a : '@scope1'
+						},
+						controller : function($scope){
+							console.log($scope);
+							console.log($scope.a);
+							// $scope.a = 'hello world';//不起作用 参数为@时数据单向绑定只能读取父作用域里的值
+						}
+					}
+				})
+
+				.directive('bookList2',function(){
+					return {
+						restrict : "ECMA",
+						template : "<ul><li ng-repeat='book in b'>{{book.name}}</li></ul>",
+						replace : true,
+						scope : {
+							b : "=scope2"
+						},
+						controller : function($scope){
+							console.log($scope.b);
+							
+							// $scope.b.push({name:"java"}); //参数为=时数据双向绑定
+						}
+					}
+				})
+
+				// & 无参情况
+				.directive('bookList3',function(){
+					return {
+						restrict : "ECMA",
+						template : "<ul><li ng-repeat='book in books3'>{{book.name}}</li></ul>",
+						replace : true,
+						// scope为true时会创建一个有继承链的独立作用域(scope默认为false时继承父元素的作用域)
+						// scope : true,
+						scope : {
+							c : "&scope3"
+						},
+						controller : function($scope){
+							console.log($scope);
+							console.log($scope.c());
+							$scope.books3 = $scope.c();
+							// $scope.c().push({name:'haha'});//测试发现也是双向绑定
+						}
+					}
+				})
+
+				// & 有参情况
+				.directive('direct',function(){
+					return {
+						restrict : 'E',
+						template : '<input ng-model="model"/>'+'<button ng-click="show({name:model})">show</button>',
+						scope : {
+							show : '&'
+						}
+					}
+				})
+				
+	</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>过滤器</title>
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body>
+<div ng-app='app' ng-controller='ctrl'>
+	<!-- 123,456,789 -->
+	<p>{{123456789 | number}}</p>
+
+	<!-- 123,456,789.0000 -->
+	<p>{{123456789 | number:4}}</p>
+
+	<!-- 123,456.7890 -->
+	<p>{{123456.789 | number:4}}</p>
+
+
+	<!-- $123,456,789.00 -->
+	<p>{{123456789 | currency}}</p>
+
+	<!-- ￥123,456,789.00 -->
+	<p>{{123456789 | currency:"￥"}}</p>
+
+
+	<!-- Jan 2, 1970 -->
+	<p>{{123456789 | date}}</p>
+
+	<!-- "2016-12-19T14:32:20.850Z" -->
+	<p>{{today}}</p>
+
+	<!-- 2016-12-19 22:33:13 -->
+	<p>{{today | date:'y-MM-dd H:mm:ss.sss'}}</p>
+	
+	
+	<!-- [{"name":"shanghai","nickname":"魔都"}] -->
+	<p>{{ data.city | filter:'shanghai' }}</p>
+
+	<!-- [{"name":"shanghai","nickname":"魔都"},{"name":"beijing","nickname":"帝都"}] -->
+	<p>{{ data.city | filter:'ng' }}</p>
+
+	<!-- 自定义过滤器:[{"name":"shanghai","nickname":"魔都"}] -->
+	<p><font color="red">自定义过滤器:</font>{{ data.city | filter:checkName }}</p>
+</div>
+
+<script>
+	angular.module('app',[])
+	.controller('ctrl',function($scope,$filter){
+		$scope.today = new Date;
+		$scope.data = {
+			msg : 'hello world!',
+			city : [
+				{
+					name : 'shanghai',
+					nickname : '魔都',
+				},
+				{
+					name : 'beijing',
+					nickname : '帝都'
+				}
+			]
+		};
+		var jsonString = $filter('json')($scope.data);
+		console.log($scope.data);
+		console.log(jsonString);//可以将对象格式化为json字符串以方便调试
+
+		//自定义过滤器
+		$scope.checkName = function(obj){
+			console.log(obj);
+			if(obj.name.indexOf('s')===-1)
+				return false;
+			return true;
+		}
+	});
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body>
+	
+	<div ng-controller="ctrl">{{clock.num}}</div>
+	
+	<script>
+		var app=angular.module('app',[]);
+		app.controller('ctrl',function($scope,$timeout){
+			$scope.clock={
+				num:new Date()
+			};
+			var updateClock=function(){
+				$scope.clock.num=new Date();
+			};
+			setInterval(function(){
+				$scope.$apply(updateClock);
+			},1000);
+			updateClock();
+		});
+	</script>
+</body>
+</html>

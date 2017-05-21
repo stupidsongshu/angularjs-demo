@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body ng-app="app">
+	<div class="container-fluid" ng-controller="ctrl">
+		<div class="row">
+			<div class="col-xs-6" style="height: 500px;background-color: #ccc;">
+				<custome-textarea contenteditable='true' ng-model='content'>hello world</custome-textarea>
+			</div>
+			<div class="col-xs-6">
+				<custome-textarea custome-canvas>{{content}}</custome-textarea>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		var app = angular.module('app',[]);
+	
+			app.controller('ctrl',function(){
+	
+			})
+			.directive('customeTextarea',function(){
+				return {
+					restrict:'E',
+					scope:{},
+					require:'ngModel',
+					link:function(scope,ele,attr,ngModelCtrl){
+						ngModelCtrl.$setViewValue(ele.text());
+	
+						ele.on('keyup',function(){
+							scope.$apply(function(){
+								ngModelCtrl.$setViewValue(ele.text());
+							})
+						});
+	
+						ngModelCtrl.$render = function(){
+							ele.html(ngModelCtrl.$viewValue);
+						}
+					}
+				}
+			})
+	
+			.directive('customeCanvas',function(){
+				return {
+					restrict:'A',
+					require:'^customeTextarea',
+					link:function(scope,ele,attr,customeTextareaCtrl){
+						console.log(scope);
+						console.log(customeTextareaCtrl);
+					}
+				}
+			})
+		
+	</script>
+</body>
+</html>

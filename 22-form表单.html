@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>form表单</title>
+	<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body>
+	<!-- 
+		一般来讲表单可能遇到的问题
+		1.如何数据绑定
+		2.验证表单
+		3.显示错误信息
+		4.整个form的验证
+		5.避免提交没有验证通过的表单
+		6.防止表单多次提交
+
+		input属性
+		1.name名字
+		2.ng-model绑定的数据
+		3.ng-required是否必填
+		4.ng-minlength最小长度
+		5.ng-maxlength最大长度
+		6.ng-pattern匹配模式
+		7.ng-change值变化时的回调
+
+		form控制变量
+		1.字段是否未更改:formName.inputFieldName.$pristine
+		2.字段是否更改:formName.inputFieldName.$dirty
+		3.字段有效:formName.inputFieldName.$valid
+		4.字段无效:formName.inputFieldName.$invalid
+		5.字段错误信息:formName.inputFieldName.$error
+	 -->
+	<div ng-app="app" class="container" style="margin-top: 10px;">
+		<form name="myForm" action="test.php" class="form-horizontal" ng-controller="firstCtrl">
+			<div class="form-group" ng-class="{'has-error':myForm.username.$dirty && myForm.username.$invalid}">
+				<label class="col-sm-2 control-label">用户名</label>
+				<div class="col-sm-10">
+					<input type="text" name="username" class="form-control" placeholder="请输入用户名" autocomplete="off" autofocus="autofocus" ng-model='form.username' ng-minlength='3' ng-maxlength='6' ng-required="true" ng-pattern="/^[a-zA-Z]/">
+					<div class="alert alert-danger help-block" ng-show="myForm.username.$dirty && myForm.username.$error.minlength">用户名长度至少为3位</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.username.$dirty && myForm.username.$error.maxlength">用户名长度最多为6位</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.username.$dirty && myForm.username.$error.required && myForm.username.$dirty">用户名不能为空</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.username.$dirty && myForm.username.$error.pattern">用户名必须以英文字母开始</div>
+					错误信息:{{myForm.username.$error}}
+				</div>
+			</div>
+
+			<div class="form-group" ng-class="{'has-error':myForm.password.$dirty && myForm.password.$invalid}">
+				<label class="col-sm-2 control-label">密码</label>
+				<div class="col-sm-10">
+					<input type="password" name="password" class="form-control" placeholder="请输入密码" autocomplete="off" ng-model='form.password' ng-minlength='3' ng-maxlength='6' ng-required="true">
+					<div class="alert alert-danger help-block" ng-show="myForm.password.$dirty && myForm.password.$error.minlength">密码长度至少为3位</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.password.$dirty && myForm.password.$error.maxlength">密码长度最多为6位</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.password.$dirty && myForm.password.$error.required && myForm.password.$dirty">密码不能为空</div>
+					错误信息:{{myForm.password.$error}}
+				</div>
+			</div>
+
+			<div class="form-group" ng-class="{'has-error':myForm.password.$dirty && myForm.passwordConfirm.$dirty && (form.password !== form.passwordConfirm)}">
+				<label class="col-sm-2 control-label">确认密码</label>
+				<div class="col-sm-10">
+					<input type="password" name="passwordConfirm" class="form-control" placeholder="确认密码" autocomplete="off" ng-model='form.passwordConfirm'>
+					<div class="alert alert-danger help-block" ng-show="myForm.password.$dirty && myForm.passwordConfirm.$dirty && (form.password !== form.passwordConfirm)">两次密码不一致</div>
+				</div>
+			</div>
+
+			<div class="form-group" ng-class="{'has-error':myForm.email.$dirty && myForm.email.$invalid}">
+				<label class="col-sm-2 control-label">邮箱</label>
+				<div class="col-sm-10">
+					<input type="email" name="email" class="form-control" placeholder="请输入邮箱地址" autocomplete="off" ng-model='form.email' ng-minlength="5" ng-maxlength="20" ng-required="true">
+					<div class="alert alert-danger help-block" ng-show="myForm.email.$dirty && myForm.email.$error.minlength">邮箱长度至少为5位</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.email.$dirty && myForm.email.$error.maxlength">邮箱长度最多为20位</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.email.$dirty && myForm.email.$error.required">邮箱不能为空</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.email.$dirty && myForm.email.$error.email">邮箱格式不正确</div>
+					错误信息:{{myForm.email.$error}}
+				</div>
+			</div>
+
+			<div class="form-group" ng-class="{'has-error':myForm.url.$dirty && myForm.url.$invalid}">
+				<label class="col-sm-2 control-label">URL</label>
+				<div class="col-sm-10">
+					<input type="url" name="url" class="form-control" placeholder="请输入url网址(须以http://或https://开始)" autocomplete="off" ng-model='form.url' ng-minlength='10' ng-maxlength='30' ng-required="true">
+					<div class="alert alert-danger help-block" ng-show="myForm.url.$dirty && myForm.url.$error.minlength">网址长度至少为10位</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.url.$dirty && myForm.url.$error.maxlength">网址长度最多为30位</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.url.$dirty && myForm.url.$error.required && myForm.url.$dirty">网址不能为空</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.url.$dirty && myForm.url.$error.url">网址格式不正确</div>
+					错误信息:{{myForm.url.$error}}
+				</div>
+			</div>
+
+			<div class="form-group" ng-class="{'has-error':myForm.age.$dirty && myForm.age.$invalid}">
+				<label class="col-sm-2 control-label">年龄</label>
+				<div class="col-sm-10">
+					<input type="number" name="age" class="form-control" placeholder="请输入年龄" autocomplete="off" ng-model='form.age' min="10" max="60" ng-required="true">
+					<div class="alert alert-danger help-block" ng-show="myForm.age.$dirty && myForm.age.$error.min">年龄不能小于10岁</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.age.$dirty && myForm.age.$error.max">年龄不能大于60岁</div>
+					<div class="alert alert-danger help-block" ng-show="myForm.age.$dirty && myForm.age.$error.required">年龄不能为空</div>
+					错误信息:{{myForm.age.$error}}
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">性别</label>
+				<div class="col-sm-10">
+					<label class="radio-inline">
+						<input type="radio" name="sex" value="1" ng-model="form.sex" ng-required="true">男
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="sex" value="0" ng-model="form.sex" ng-required="true">女
+					</label>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">爱好</label>
+				<div class="col-sm-10">
+					<label class="checkbox-inline" ng-repeat="hobby in hobbies">
+						<input type="checkbox" name="hobby[]" ng-click="toggletHobbySection(hobby.id)" ng-checked="defaultData.hobbies ? defaultData.hobbies.indexOf(hobby.id) !== -1 : false">{{hobby.name}}
+					</label>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">地址</label>
+				<div class="col-sm-3">
+					<!-- 
+						<select><options value="a">b</options></select>
+						ng-options循环出来的x.id指向value="a"(数据也绑定到了ng-model='defaultData.provience'上),x.name则是展示给用户看到的b
+					-->
+					<!-- 
+						provience的id均为0;
+						city的parent等于provience的id;
+						area的parent等于city的id
+					 -->
+					<select class="form-control" ng-options="x.id as x.name for x in cities | addressFilter : 0" ng-model="defaultData.provience"></select>{{defaultData.provience}}
+				</div>
+				<div class="col-sm-3">
+					<select class="form-control" ng-options="x.id as x.name for x in cities | addressFilter : defaultData.provience" ng-model="defaultData.city"></select>{{defaultData.city}}
+				</div>
+				<div class="col-sm-3">
+					<select class="form-control" ng-options="x.id as x.name for x in cities | addressFilter : defaultData.city" ng-model="defaultData.area" ng-required="true"></select>{{defaultData.area}}
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label">数字</label>
+				<div class="col-sm-10">
+					<input type="text" name="even" class="form-control" placeholder="请输入偶数" ng-model="form.even" even-number>
+					<input type="text" name="even" class="form-control" placeholder="请输入偶数" ng-model="form.even" even-number>
+					<div class="alert alert-danger help-block" ng-show="myForm.even.$error.evenStatus">只能输入偶数哦</div>
+					错误信息:{{myForm.even.$error}}
+				</div>
+			</div>
+			
+			<!-- 自定义textarea -->
+			<div class="form-group">
+				<label class="col-sm-2 control-label">个人说明</label>
+				<div class="col-sm-10">
+					<custome-textarea class="form-control" ng-model="defaultData.introduction"></custome-textarea>
+				</div>
+				<div class="col-sm-offset-2 col-sm-10">
+					<custome-textarea class="form-control" ng-model="defaultData.introduction"></custome-textarea>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button type="submit" class="btn btn-default" ng-disabled="myForm.$invalid || defaultData.hobbies === undefined || defaultData.hobbies.length === 0">注册</button>
+					<button type="reset" class="btn btn-default" ng-click="reset()">重置</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<script>
+		var app = angular.module('app',[])
+				.controller('firstCtrl',['$scope',function($scope){
+					var that = this;
+
+					//假设爱好多选项是从后台获取
+					$scope.hobbies = [
+						{
+							id : 1,
+							name : '吃饭'
+						},
+						{
+							id : 2,
+							name : '睡觉'
+						},
+						{
+							id : 3,
+							name : '打豆豆'
+						},
+						{
+							id : 4,
+							name : '玩游戏'
+						},
+						{
+							id : 5,
+							name : '小拳拳捶你胸'
+						}
+					];
+
+					$scope.cities = [
+			            {
+			                id: 1,
+			                name: '上海',
+			                parent: 0
+			            },
+			            {
+			                id: 2,
+			                name: '上海市',
+			                parent: 1
+			            },
+			            {
+			                id: 8,
+			                name: '徐汇区',
+			                parent: 2
+			            },
+			            {
+			                id: 3,
+			                name: '长宁区',
+			                parent: 2
+			            },
+			            {
+			                id: 4,
+			                name: '北京',
+			                parent: 0
+			            },
+			            {
+			                id: 5,
+			                name: '北京市',
+			                parent: 4
+			            },
+			            {
+			                id: 6,
+			                name: '东城区',
+			                parent: 5
+			            },
+			            {
+			                id: 7,
+			                name: '丰台区',
+			                parent: 5
+			            },
+			            {
+			                id: 8,
+			                name: '湖北',
+			                parent: 0
+			            },
+			            {
+			                id: 9,
+			                name: '武汉市',
+			                parent: 8
+			            },
+			            {
+			                id: 10,
+			                name: '襄阳市',
+			                parent: 8
+			            },
+			            {
+			                id: 11,
+			                name: '东湖区',
+			                parent: 9
+			            },
+			            {
+			                id: 12,
+			                name: '南漳县',
+			                parent: 10
+			            }
+			        ];
+
+					//页面打开时表单的默认值
+					$scope.defaultData = {
+						hobbies : [1,2], //页面打开时爱好默认选中吃饭睡觉
+						area : 12 //页面打开时地址默认选中湖北襄阳市南漳县(id:12)
+					}
+
+					$scope.toggletHobbySection = function(id){
+						var index = -1;
+						if($scope.defaultData.hobbies === undefined){
+							$scope.defaultData.hobbies = [];
+						}else{
+							index = $scope.defaultData.hobbies.indexOf(id);
+						}
+
+						if(index === -1){
+							$scope.defaultData.hobbies.push(id);
+						}else{
+							$scope.defaultData.hobbies.splice(index,1);
+						}
+						console.log($scope.defaultData.hobbies);
+					};
+					console.log($scope.defaultData.hobbies);
+
+					// this.findSelfParent = function(id){
+					// 	var parent;
+					// 	angular.forEach($scope.cities,function(city){
+					// 		if(city.id === id){
+					// 			parent = city.parent;
+					// 		}
+					// 	});	
+					// 	return parent;
+					// };
+					//根据下一级的parent找到其上一级的id进行地址关联
+					this.findParentId = function(parent){
+						var parentId;
+						angular.forEach($scope.cities,function(city){
+							if(parent === city.id){
+								parentId = city.parent;
+								return;
+							}
+						});
+						return parentId;
+					};
+
+					this.initCity = function(){
+						if($scope.defaultData.area !== undefined){
+							//已知第三级区id可以先找到其对应的parent然后找到其第二级市id再找到其第一级省(或直辖市)id
+							// $scope.defaultData.city = this.findParentId(this.findSelfParent($scope.defaultData.area));
+							$scope.defaultData.city = that.findParentId($scope.defaultData.area);
+							$scope.defaultData.provience = that.findParentId($scope.defaultData.city);
+						}
+					};
+					//第一次打开页面时初始化一下
+					this.initCity();
+
+					this.originData = angular.copy($scope.defaultData);
+
+					$scope.reset = function(){
+						$scope.defaultData = angular.copy(that.originData);
+						//表单的$setPristine()方法将表单复位原始状态
+						$scope.myForm.$setPristine();
+						that.initCity();
+					};
+
+				}])
+				.filter('addressFilter',function(){
+					return function(data,parent){
+						var filterData = [];
+						angular.forEach(data,function(value){
+							if(value.parent == parent){
+								filterData.push(value);
+							}
+						});
+						return filterData;
+					};
+				})
+
+				/*
+				 * ngModelController中的方法
+				 * 1.$render():当模型发生变化时，应该怎么去更新视图，从model向view绑定，调用ctrl.$render方法，将viewValue渲染到页面上
+				 * 2.$setViewValue(value,trigger):当view发生了某件事情时，从view向model绑定,调用$setViewValue把viewValue保存下来
+				 * 3.$isEmpty(value):该方法用于判断输入值是否为空。例如，使用ngModelController的指令需要判断其中是否有输入值的时候会使用该方法。该方法可用来判断值是否为undefined,'',null或者NaN。可以根据自己的需要重载该方法。
+				 * 4.$setValidity(validationErrorKey, isValid):设置验证结果
+				 * 5.$setPristine():用于设置控制到原始状态。该方法可以移除'ng-dirty'类并将控制恢复到原始状态('ng-pristine'类)。
+				 * 6.$cancelUpdate():用于取消一次更新并重置输入元素的值以防止$viewValue发生更新，它会由一个pending debounced事件引发或者是因为input输入框要等待一些未来的事件。如果你有一个使用了ng-model-options指令的输入框，并为它设置了debounced事件或者是类似于blur的事件，那么你可能会碰到在某一段时间内输入框中值和ngModel的$viewValue属性没有保持同步的情况。在这种情况下，如果你试着在debounced/future事件发生之前更新ngModel的$modelValue，你很有可能遇到困难，因为AngularJS的dirty cheching机制实际上并不会分辨一个模型究竟有没有发生变化。$cancelUpdate()方法应该在改变一个输入框的model之前被调用。记住，这很重要因为这能够确保输入字段能够被新的model值更新，而pending操作将会被取消。
+				 * 
+				 *
+				 * ngModelController中的属性
+				 * 1.$viewValue:视图的值
+				 * 2.$modelValue:模型里的值(模型中控制器绑定的的该值)
+				 * 3.$parsers:保存了从viewValue向modelValue绑定过程中的处理函数，它们将来会依次执行。$parsers是被执行的功能数组，作为一个控制器从DOM读取值的管道。每一个函数被调用去传递值到下一个，最后返回值用于填充模型。用于净化/转换或者验证值。为了验证，解析器应该使用$setvalidity()更新有效状态，并返回未定义的无效值。
+				 * 4.$formatters:(与$parsers类似)保存了从modelValue向viewValue绑定过程中的处理函数。
+				 * 5.$error:带有所有错误的hash对象。
+				 * 6.$pristine:用户还没有与控制器交互则为true。
+				 * 7.$dirty:用户已经与控制器交互则为true。
+				 * 8.$valid:如果没错误则为true。
+				 * 9.$invalid:控制器上至少有一个错误则为true。
+				 */
+				.directive('evenNumber',function(){
+					return {
+						require : "ngModel",
+						link : function(scope,ele,attrs,ngModelController){
+							console.log(ngModelController);
+							ngModelController.$parsers.push(function(viewValue){
+								console.log(viewValue);
+								if(viewValue % 2 === 0){
+									ngModelController.$setValidity('evenStatus',true);
+								}else{
+									ngModelController.$setValidity('evenStatus',false);
+								}
+								return viewValue;
+							});
+
+							ngModelController.$formatters.push(function(modelValue){
+								console.log(modelValue);
+								return modelValue+20170212;
+							});
+						}
+					}
+				})
+
+				.directive('customeTextarea',function(){
+					return {
+						restrict : 'E',
+						template : '<div contenteditable="true"></div>',
+						replace : true,
+						require : 'ngModel',
+						link : function(scope,ele,attr,ngModelController){
+							ele.on('keyup',function(){
+								scope.$apply(function(){
+									ngModelController.$setViewValue(ele.html());
+								});
+							});
+
+							ngModelController.$render = function(){
+								ele.html(ngModelController.$viewValue);
+							};
+						}
+					}
+				})
+	</script>
+</body>
+</html>

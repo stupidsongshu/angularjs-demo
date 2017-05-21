@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>自定义指令controller、controllerAs属性</title>
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body>
+	<div ng-controller="firstCtrl">
+		<div book-list1></div>
+		<hr />
+		<div book-list2></div>
+	</div>
+	
+	<script type="text/javascript">
+		/*
+		 * controller && controllerAs && require
+		 * controller会暴露一个API，利用这个API可以在多个指令之间通过依赖注入进行通信
+		 * controller($scope,$element,$attrs,$transclude)
+		 * controllerAs是给controller起个别名方便使用
+		 * require可以将其他指令传递给自己
+		 *   directiveName : 通过驼峰法的命名指定了控制元素应该带有哪一条指令，默认会从同一个元素上的指令
+		 *   ^directiveName : 在父级查找指令
+		 *   ?directiveName : 表示指令是可选的，如果找不到不需要抛出异常
+		 */
+		var app = angular.module('app',[])
+				.controller('firstCtrl',['$scope',function($scope){
+					
+				}])
+				.directive('bookList1',function(){
+					return {
+						restrict : 'EACM',
+						template : '<ul><li ng-repeat="book in books">{{book.name}}</li></ul>',
+						replace : true,
+						controller : function($scope){
+							$scope.books = [
+								{
+									name : 'HTML'
+								},
+								{
+									name : 'CSS'
+								},
+								{
+									name : 'javascript'
+								}
+							];
+							this.fn = function(){
+								alert(1);
+							};
+						},
+						controllerAs : 'bookListController1',
+						link : function(scope,iElement,iAttrs,bookListController1){
+							console.log(iElement);
+							iElement.on('click',function(){
+								bookListController1.fn();
+							});
+						}
+					}
+				})
+				
+				
+				.directive('bookList2',function(){
+					return {
+						restrict : 'EACM',
+						//template : '<ul><li ng-repeat="book in books">{{book.name}}</li></ul><book-add></book-add>',//直接这样写会报错，解决方法一：如下当replace为true时在最外面加一层标签；解决方法二：去掉replace:true(或者不写replace属性)
+						template : '<div><ul><li ng-repeat="book in books2">{{book.name}}</li></ul><book-add></book-add></div>',
+						replace : true,
+						controller : function($scope){
+							$scope.books2 = [
+								{
+									name : 'HTML2'
+								},
+								{
+									name : 'CSS2'
+								},
+								{
+									name : 'javascript2'
+								}
+							];
+							this.add = function(){
+								$scope.$apply(function(){
+									$scope.books2.push({name : 'Angularjs'});
+								});
+							};
+						}
+					}
+				})
+				.directive('bookAdd',function(){
+					return {
+						restrict : 'ECAM',
+						template :'<button>click to add one book</button>',
+						replace : true,
+						require : '^bookList2',
+						link : function(scope,iElement,iAttrs,bookListController2){
+							console.log(iElement);
+							iElement.on('click',function(){
+								bookListController2.add();
+							});
+						}
+					}
+				})
+	</script>
+</body>
+</html>

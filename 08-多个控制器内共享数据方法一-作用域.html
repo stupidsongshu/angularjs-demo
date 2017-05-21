@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='app'>
+<head>
+	<meta charset="UTF-8">
+	<title>多个控制器内共享数据方法一：作用域</title>
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body>
+	<div ng-controller='firstCtrl'>
+		<input type="text" ng-model='data.name'>
+		<p>{{data.name}}</p>
+	</div>
+	<div ng-controller='secondCtrl'>
+		<input type="text" ng-model='data.name'>
+		<p>{{data.name}}</p>
+	</div>
+
+	<script>
+		angular.module('app',[])
+		.controller('firstCtrl',function($scope){
+			console.log($scope);
+			$scope.data={
+				name:'firstCtrl...'
+			};
+		})
+		.controller('secondCtrl',function($scope){
+			console.log($scope);
+			//通过$scope作用域进行关联，但注意共享的需为对象(基本数据类型不会自动更新),此方法不推荐(当html结构复杂时会很杂乱)
+			$scope.data=$scope.$$prevSibling.data;
+		});
+	</script>
+</body>
+</html>

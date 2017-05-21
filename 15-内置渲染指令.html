@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='app'>
+<head>
+	<meta charset="UTF-8">
+	<title>内置渲染指令</title>
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+	<style>
+		.odd{
+			color: red;
+		}
+		.even{
+			color: blue;
+		}
+	</style>
+</head>
+<body>
+	<script>
+		var app = angular.module('app',[]);
+	</script>
+
+	<!-- 渲染指令:
+		1.ng-bind
+		2.ng-init
+		3.ng-repeat
+			$index当前索引
+			$first是否为头元素
+			$middle是否为非头非尾元素
+			$last是否为尾元素
+			$even
+			$odd
+		4.ng-include
+		5.ng-bind-template
+	 -->
+	<div ng-init="arr=['北京','上海','广州']">
+		<ul>
+			<li ng-repeat='item in arr' ng-class-odd="'odd'" ng-class-even="'even'">
+				<span>$index:{{$index}}</span>
+				<span>$first:{{$first}}</span>
+				<span>$middle:{{$middle}}</span>
+				<span>$last:{{$last}}</span>
+				<span>{{item}}</span>
+			</li>
+		</ul>
+	</div>
+	
+	<!-- as attr -->
+	<div ng-include="'nginclude.html'"></div>
+	<div ng-include src="'nginclude.html'"></div>
+	<!-- as element -->
+	<ng-include src="'nginclude.html'"></ng-include>
+
+	<!-- 事件指令:
+		1.ng-change
+		2.ng-click
+		3.ng-dbclick
+		4.ng-mousedown
+		5.ng-mouseup
+		6.ng-mouseenter
+		7.ng-mouseleave
+		8.ng-mouseover
+		9.ng-mouseout
+		10.ng-mousemove
+		11.ng-submit
+	 -->
+	 <div ng-controller='firstCtrl'>
+	 	<button ng-click='changeStatus($event)'>change to {{!status}}</button>
+	 	<span ng-style='{color:"red","background-color":"blue"}'>{{status}}</span>
+	 </div>
+	 <script>
+	 	app.controller('firstCtrl',function($scope){
+	 		$scope.status = true;
+	 		$scope.changeStatus = function (event) {
+	 			$scope.status = !$scope.status;
+	 			console.log(event);
+	 			console.log(event.target);
+	 			//angular.element()将js对象转换为jquery对象
+	 			angular.element(event.target).val('change to:' + !$scope.status);
+	 		};
+	 	});
+	 </script>
+
+	 <!-- 节点指令:
+		1.ng-style
+		2.ng-class
+		3.ng-class-even
+		4.ng-class-odd
+		5.ng-show
+		6.ng-hide
+		7.ng-switch
+		8.ng-src
+		9.ng-href
+		10.ng-if
+	  -->
+</body>
+</html>

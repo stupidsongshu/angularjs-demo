@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>自定义指令compile link</title>
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body>
+	<div ng-controller="ctrl">
+		<div ng-repeat="user in users" custom-tag1 custom-tag2>default value</div>
+	</div>
+
+
+	<script>
+		/*
+		 * Angularjs指令编译三阶段
+		 * 1.标准浏览器API转化:将html转化成dom，所以自定义的html标签必须符合html格式
+		 * 2.Angular compile:搜索匹配directive，按照priority排序，并执行directive上的compile方法
+		 * 3.Angular link:执行directive上的link方法，进行scope绑定及事件绑定		 
+		 */
+		/*
+		 * compile:function(tElement,tAttrs,transclude){}
+		 * compile函数用来对模板自身进行转换，仅仅在编译阶段运行一次
+		 * compile中直接返回的函数时postLink，表示link参数需要执行的函数，也可以返回一个对象里面包含preLink和postLink
+		 * 当定义compile参数时将无视link参数，因为compile里面返回的就是该指令需要执行的link函数
+		 */
+		/*
+		 * link:function(scope,iElement,iAttrs,controller){}
+		 * link参数代表的是compile返回的postLink
+		 * preLink表示在编译阶段之后，指令连接到子元素之前运行
+		 * postLink表示会在所有子元素指令都连接之后才运行
+		 * link函数负责在模型和视图之间进行动态关联，对于每个指令的每个实例，link函数都会执行一次
+		 */
+		/*
+		 * compile和link的使用时机
+		 * compile:想在dom渲染前对它进行变形并且不需要scope参数；想在所有相同directive里共享某些方法，这时应该定义在compile里，性能会比较好；返回值就是link的function，这时就是共同使用的时候
+		 * link:对特定的元素注册事件，需要用到scope参数来实现dom元素的一些行为
+		 */
+		 
+		var app = angular.module('app',[])
+				  .directive('customTag1',function(){
+				  		var i = 0;
+				  		return {
+				  			restrict : 'ECAM',
+				  			template : '<div>{{user.name}}</div>',
+				  			replace : true,
+				  			compile : function(tElement,tAttrs,transclude){
+				  				//编译阶段
+				  				console.log('compile编译阶段');
+
+				  				console.log(tElement);
+				  				console.log(tAttrs);
+
+				  				//在compile编译阶段改变dom结构
+				  				tElement.append(angular.element('<span>&nbsp;aaa{{count}}</span>'));
+
+				  				return {
+				  					//preLink表示在编译阶段之后，指令连接到子元素之前运行
+				  					pre : function preLink(scope,iElement,iAttrs,controller){
+				  						console.log('before custom-tag1 directive children element link');
+				  						/*iElement.on('click',function(){
+				  							scope.$apply(function(){
+				  								scope.user.name = 'preLink click';
+				  								scope.count = i++;
+				  							});
+				  						});*/
+				  					},
+				  					//postLink表示会在所有子元素指令都连接之后才运行
+				  					post : function postLink(scope,iElement,iAttrs,controller){
+				  						console.log('after custom-tag1 directive all children element link');
+				  						iElement.on('click',function(){
+				  							scope.$apply(function(){
+				  								scope.user.name = 'postLink click';
+				  								scope.count = i++;
+				  							});
+				  						});
+				  					}
+				  				}
+				  			}
+				  		}
+				  })
+				  .directive('customTag2',function(){
+				  		return {
+				  			restrict : 'ECAM',
+				  			replace : true,
+				  			compile : function(tElement,tAttrs,transclude){
+				  				//编译阶段
+				  				console.log('compile编译阶段');
+
+				  				console.log(tElement);
+				  				console.log(tAttrs);
+
+				  				return {
+				  					//preLink表示在编译阶段之后，指令连接到子元素之前运行
+				  					pre : function preLink(){
+				  						console.log('before custom-tag2 directive children element link');
+				  					},
+				  					//postLink表示会在所有子元素指令都连接之后才运行
+				  					post : function postLink(){
+				  						console.log('after custom-tag2 directive all children element link');
+				  					}
+				  				}
+				  			}
+				  		}
+				  })
+				  .controller('ctrl',['$scope',function($scope){
+				  	$scope.users = [
+				  		{
+				  			id : 10,
+				  			name : '张三'
+				  		},
+				  		{
+				  			id : 20,
+				  			name : '李四'
+				  		}
+				  	];
+				  }])
+	</script>
+</body>
+</html>

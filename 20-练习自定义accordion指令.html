@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>练习自定义accordion指令</title>
+	<link rel="stylesheet" href="bootstrap.min.css">
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body>
+	<div ng-controller="firstCtrl">
+		<kittencup-group>
+			<kittencup-collapse ng-repeat="data in datas" heading="{{data.title}}">
+				{{data.content}}
+			</kittencup-collapse>
+		</kittencup-group>
+	</div>
+
+	<script>
+		var app = angular.module('app',[])
+				.controller('firstCtrl',['$scope','Data',function($scope,Data){
+					$scope.datas = Data;
+				}])
+				.factory('Data',function(){
+					return [
+						{
+							title : 'first-title',
+							content : 'first-content'
+						},
+						{
+							title : 'second-title',
+							content : 'second-content'
+						},
+						{
+							title : 'third-title',
+							content : 'third-content'
+						}
+					];
+				})
+				.directive('kittencupGroup',function(){
+					return {
+						restrict : 'E',
+						replace : true,
+						template : '<div class="panel-group" ng-transclude></div>',
+						transclude : true,
+						controller : function(){
+							//定义一个空数组用于存储ng-repeat循环出来的每一个作用域scope
+							this.groups = [];
+
+							this.closeOtherCollapse = function(nowScope){
+								angular.forEach(this.groups,function(scope){
+									if(nowScope !== scope){
+										scope.isOpen = true;
+									}
+								});
+							};
+						},
+						controllerAs : 'kittencupGroupCtrl'
+					}
+				})
+				.directive('kittencupCollapse',function(){
+					return {
+						restrict : 'E',
+						replace : true,
+						templateUrl : 'accordion.html',
+						scope : {
+							t : "@heading"
+						},
+						transclude : true,
+						require : '^kittencupGroup',
+						link : function(scope,element,attrs,kittencupGroupCtrl){
+							scope.isOpen = true;
+							scope.changeStatus = function(){
+								scope.isOpen = !scope.isOpen;
+								kittencupGroupCtrl.closeOtherCollapse(scope);
+							};
+							kittencupGroupCtrl.groups.push(scope);
+						}
+					}
+				})
+	</script>
+</body>
+</html>

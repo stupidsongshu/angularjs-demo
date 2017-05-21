@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='app'>
+<head>
+	<meta charset="UTF-8">
+	<title>location</title>
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body ng-controller="ctrl">
+	<script>
+		angular.module('app',[])
+		.controller('ctrl',function($scope,$http,$location){
+			console.log($location.path());
+			console.log($location.url());
+		})
+	</script>
+</body>
+</html>

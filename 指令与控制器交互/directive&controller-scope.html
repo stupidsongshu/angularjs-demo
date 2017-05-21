@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>指令与控制器交互-指令调用控制器中的方法</title>
+	<script src="https://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+	<style>
+		div{
+			border:1px solid #000;
+			border-radius: 5px;
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body ng-app="app">
+	<!-- 指令复用需要使用指令的属性 -->
+	<div ng-controller="ctrl1">
+		<loader howToLoad="load1">滑动加载1</loader>
+	</div>
+
+	<div ng-controller="ctrl2">
+		<loader howToLoad="load2">滑动加载2</loader>
+	</div>
+
+
+
+	<script>
+		var app = angular.module('app',[]);
+
+		app.controller('ctrl1',function($scope){
+			$scope.load1 = function(){
+				console.log('loading......1111');
+			}
+		})
+
+		.controller('ctrl2',function($scope){
+			$scope.load2 = function(){
+				console.log('loading......2222');
+			}
+		})
+
+		.directive('loader',function(){
+			return {
+				restrict:'E',
+				scope:{
+					//如果html指令属性如果是howToLoad驼峰法命名，这里需要全部转为小写howtoload;
+					//如果html指令属性如果是以how-to-load形式命名，这里需要全部转为驼峰法howToLoad
+					load:"=howtoload"
+				},
+				link:function(scope,ele,attr){
+					ele.bind('mouseenter',function(){
+						scope.load();
+					});
+				}
+			}
+		})
+
+	</script>
+</body>
+</html>

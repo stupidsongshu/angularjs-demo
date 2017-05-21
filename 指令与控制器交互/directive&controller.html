@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>指令与控制器交互-指令调用控制器中的方法</title>
+	<script src="https://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+	<style>
+		div{
+			border:1px solid #000;
+			border-radius: 5px;
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body ng-app="app">
+	<div ng-controller="ctrl1">
+		<loader howToLoad="load1">滑动加载1</loader>
+	</div>
+
+	<script>
+		var app = angular.module('app',[]);
+
+		app.controller('ctrl1',function($scope){
+			$scope.load1 = function(){
+				console.log('loading......1111');
+			}
+		})
+
+		.directive('loader',function(){
+			return {
+				restrict:'E',
+				link:function(scope,ele,attr){
+					ele.bind('mouseenter',function(){
+						scope.load1();
+
+						// 方法二：使用scope的$apply()方法调用
+						// scope.$apply('load1()');
+					});
+				}
+			}
+		})
+
+	</script>
+</body>
+</html>

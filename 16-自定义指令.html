@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>自定义指令</title>
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body>
+
+<custom-tag1>This is the first default value</custom-tag1>
+<div class="custom-tag1"></div>
+<div custom-tag1></div>
+<!-- directive:custom-tag1 -->
+
+
+<custom-tag2>This is the second default value</custom-tag2>
+
+
+<div ng-controller='firstCtrl'>
+	<custom-tag3></custom-tag3>
+</div>
+<script type="text/ng-template" id='tag3'>
+	<div>{{name}}:This is load from type of text/ng-template script.</div>
+</script>
+
+<custom-tag4>This is the fourth default value</custom-tag4>
+
+<!-- 一个元素内有多个指令且指令内都有模板时会报错,可以使用priority指定不同指令的优先级来改变指令的执行顺序,terminal为true时可以结束小于当前指令权重的其他指令的执行 -->
+<div custom-tag5 custom-tag6></div>
+
+
+<script>
+	//自定义指令通过$compileProvider的directive()方法实现
+	//如果指令名字为xxx-yyy形式,在设置指令名字时应为xxxYyy驼峰式声明法
+	//指令定义选项:priority template terminal templateUrl scope replace controller transclude controllerAs compile require link restrict
+	//restrict指令在模板中可以4中风格任意组合(如果忽略restrict则默认为A,如果支持IE8需使用基于属性和样式类的指令):1.E元素<my-dir></my-dir>;2.C样式类<span class="my-dir:exp;"></span>;3.A属性<span my-dir="exp"></span>;4.M注释<!-- directive:my-dir exp -->
+	//template:模板内容,这个内容会根据replace参数的设置替换节点或只替换节点内容
+	//replace:如果此配置为true则替换指令所在的元素,如果为false或不指定则把当前指令追加到所在的元素内部。对于restrict为元素(E)在最终效果中是多余的,所有replace通常设置为true(注意:当replace为true时,template和teplateUrl替换的内容外层必须至少有一层标签,否则报错)
+	//templateUrl:加载模板所要使用的URL,可以加载当前模板内对应的text/ng-template script id
+	//transclude:当replace为true时会替换掉整个节点,若要保留原内容可设置transclude为true,在模板中设置<span ng-transclude></span>指定放置原内容的位置
+	//priority:设置指令在模板中的执行顺序,顺序是相对于元素上其他执行而言,默认为0,从小到大的顺序依次执行。设置优先级的情况比较少,像ng-repeat在遍历元素的过程中需要angular先拷贝生成的模板元素再应用其他指令,所以ng-repeat默认的priority是1000
+	//terminal:是否以当前指令的权重为结束界限。如果这值设置为true,则节点中权重小于当前指令的其他指令不会被执行。相同权重的会执行。
+	var app = angular.module('app',[],['$compileProvider',function($compileProvider){
+		console.log($compileProvider);
+		$compileProvider.directive('customTag1',function(){
+			return {
+				restrict : 'ECAM',
+				// template : 'hello world', //replace为true时这样写会报错
+				template : '<div>hello world</div>',
+				replace : true,
+				compile : function(){
+					console.log(1);
+				}
+			}
+		});
+		$compileProvider.directive('customTag2',function(){
+			return {
+				restrict : 'ECAM',
+				templateUrl : 'tmp.html',
+				replace : true
+			}
+		});
+		$compileProvider.directive('customTag3',function(){
+			return {
+				restrict : 'ECAM',
+				templateUrl : 'tag3',
+			}
+		});
+	}]);
+
+	app.controller('firstCtrl',['$scope',function($scope){
+		$scope.name = 'tag3';
+	}]);
+
+	app.directive('customTag4',function(){
+		return {
+			restrict : 'E',
+			template : '<div>tag4:(transclude) <span ng-transclude></span></div>',
+			replace : true,
+			transclude : true
+		}
+	});
+	app.directive('customTag5',function(){
+		return {
+			restrict : "A",
+			template : '<div>55555</div>',
+			priority : -1
+		}
+	});
+	app.directive('customTag6',function(){
+		return {
+			restrict : "A",
+			template : '<div>666666</div>',
+			priority : 0,
+			//以当前指令的权重(priority:0)为结束界限(权重priority小于0的指令不会执行)
+			terminal : true
+		}
+	});
+</script>
+</body>
+</html>

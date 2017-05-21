@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='app'>
+<head>
+	<meta charset="UTF-8">
+	<title>过滤器练习</title>
+	<link rel="stylesheet" href="bootstrap.min.css">
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+	<style>
+		.orderActive{
+			color: red;
+		}
+	</style>
+</head>
+<body>
+<div class="container" ng-controller='ctrl'>
+	<nav class="navbar navbar-default" role="navigation">
+	  <div class="container-fluid">
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <form class="navbar-form navbar-left" role="search">
+	        <div class="form-group">
+	          <input type="text" ng-model='search' class="form-control" placeholder="Search">
+	        </div>
+	      </form> 
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+	<table class="table">
+		<thead>
+			<tr>
+				<th ng-class="{dropup:orderPrefix==''}" ng-click='reverseSort("id")'>
+					产品编号<span ng-class="{orderActive : orderType==='id'}" class="caret"></span>
+				</th>
+				<th ng-class="{dropup:orderPrefix==''}" ng-click='reverseSort("name")'>
+					产品名称<span ng-class="{orderActive : orderType==='name'}" class="caret"></span>
+				</th>
+				<th ng-class="{dropup:orderPrefix==''}" ng-click='reverseSort("price")'>
+					产品价格<span ng-class="{orderActive : orderType==='price'}" class="caret"></span>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="product in productData | filter : {id:search} | orderBy : orderPrefix+orderType"><!-- 只对产品编号(id)进行过滤,且默认按id字段进行降序排序 -->
+				<td>{{product.id}}</td>
+				<td>{{product.name}}</td>
+				<td>{{product.price | currency : '￥'}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<script>
+	angular.module('app',[])
+	.service('product',function(){
+		return [
+			{
+				id:132,
+				name:'iphone',
+				price:7800
+			},
+			{
+				id:4587,
+				name:'ipad',
+				price:4530
+			},
+			{
+				id:37,
+				name:'ipad air',
+				price:2420
+			},
+			{
+				id:194,
+				name:'ipad mini',
+				price:3400
+			},
+			{
+				id:758,
+				name:'imac',
+				price:12600
+			}
+		];
+	})
+	.controller('ctrl',function($scope,product){
+		$scope.productData = product;
+
+		/*默认按id字段进行降序排序*/
+		$scope.orderPrefix = '-';
+		$scope.orderType = 'id'; 
+
+		$scope.reverseSort = function(type){
+			$scope.orderType = type;
+			if($scope.orderPrefix == ''){
+				$scope.orderPrefix = '-';
+			}else{
+				$scope.orderPrefix = '';
+			}
+		};
+	});
+</script>
+</body>
+</html>

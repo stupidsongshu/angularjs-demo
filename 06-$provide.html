@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='app'>
+<head>
+	<meta charset="UTF-8">
+	<title>$provide</title>
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body ng-controller="ctrl">
+	
+	<div>{{result}}</div>
+	
+	<script>
+		var app=angular.module('app',[]);
+
+		app.config(function($provide){
+			$provide.provider('customService',function(){
+				this.$get = function(){
+					// var factory = {};
+					// factory.myFun = function(a,b){
+					// 	return a*b;
+					// };
+					// return factory;
+					
+					return {
+						info : 'hello world'
+					}
+				}
+			});
+		});
+
+		app.controller('ctrl',function($scope,customService){
+			// $scope.result = customService.myFun(2,3);
+			
+			console.log(customService.info);
+		});
+	</script>
+</body>
+</html>

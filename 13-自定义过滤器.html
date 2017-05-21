@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>自定义过滤器</title>
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body>
+<div ng-controller='ctrl'>
+	<ul>
+		<li ng-repeat="user in data">
+			{{user.name}}
+			{{user.age}}
+			{{user.city}}
+		</li>
+	</ul>
+	<ul>
+		<li ng-repeat="user in data | customFilterAge">
+			{{user.name}}
+			{{user.age}}
+			{{user.city}}
+		</li>
+	</ul>
+	<ul>
+		<li ng-repeat="user in data | customFilterCity">
+			{{user.name}}
+			{{user.age}}
+			{{user.city}}
+		</li>
+	</ul>
+</div>
+
+<script>
+	angular.module('app',[],function($controllerProvider,$provide,$filterProvider){
+		//创建一个服务
+		$provide.service('Data',function(){
+			return [
+						{
+							name : 'hello',
+							age : '24',
+							city : 'shanghai'
+						},
+						{
+							name : 'world',
+							age : '30',
+							city : 'beijing'
+						}
+					];
+		});
+
+		//自定义过滤器方法一
+		$filterProvider.register('customFilterAge',function(){
+			return function (obj) {
+				console.log(obj);
+				var newObj = [];
+				angular.forEach(obj,function(value){
+					if(value.age >24){
+						newObj.push(value);
+					}
+				});
+				return newObj;
+			}
+		});
+
+		//创建一个控制器
+		$controllerProvider.register('ctrl',function($scope,Data){
+			console.log(Data);
+			$scope.data = Data;
+		});
+
+	})
+
+	//自定义一个过滤器方法二
+	.filter('customFilterCity',function(){
+		return function(obj){
+			var newObj = [];
+			angular.forEach(obj,function(value){
+				if(value.city === 'shanghai'){
+					newObj.push(value);
+				}
+			});
+			return newObj;
+		}
+	});
+</script>
+</body>
+</html>

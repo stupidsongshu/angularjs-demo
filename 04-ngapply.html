@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='app'>
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+</head>
+<body>
+	<div ng-controller="ctrl">{{date}}</div>
+
+	<script>
+		var app=angular.module('app',[]);
+		app.controller('ctrl',function($scope){
+			$scope.date=new Date();
+
+			// setInterval(function(){
+			// 	$scope.date=new Date();
+			// },1000);	<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.min.js"></script>
+		
+			setInterval(function(){
+				$scope.$apply(function(){
+					$scope.date=new Date();
+				});
+			},1000);
+		});
+	</script>
+</body>
+</html>

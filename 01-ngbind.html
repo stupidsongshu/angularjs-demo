@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+</head>
+<body>
+	<!-- <input type="text" ng-model="a">
+	<input type="text" ng-model="a"><br>
+	<input type="text" ng-model="b">
+	<div>{{a}}+{{b}}={{a*b}}</div> -->
+
+	<input type="text" ng-model="c">
+	<div>{{c}}</div>
+	<input type="text" ng-model="c">
+	<input type="button" value="按钮" ng-click="c=c+1">
+
+	<ul ng-init="json={'a':'hello','b':2016,'c':1031}">
+		<li ng-repeat="value in json">{{value}}</li>
+		<li ng-repeat="(key,value) in json">{{key}}={{value}}</li>
+		<li ng-repeat="(index,value) in json">{{index}}={{value}}</li>
+	</ul>
+
+	<ul ng-init="arr=['hello',2016,1031]">
+		<li ng-repeat="value in arr">{{value}}</li>
+		<li ng-repeat="(key,value) in arr">{{key}}={{value}}</li>
+		<li ng-repeat="(index,value) in arr">{{index}}={{value}}</li>
+	</ul>
+
+	<script>
+		var a=10;
+		function fn(){
+			a=20;
+			return;
+			function a(){
+
+			}
+		}
+		fn();
+		alert(a);
+
+	</script>
+</body>
+</html>
