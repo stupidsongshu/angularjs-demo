@@ -53,8 +53,7 @@
 									}
 								});
 							};
-						},
-						controllerAs : 'kittencupGroupCtrl'
+						}
 					}
 				})
 				.directive('kittencupCollapse',function(){
@@ -69,7 +68,7 @@
 						require : '^kittencupGroup',
 						link : function(scope,element,attrs,kittencupGroupCtrl){
 							scope.isOpen = true;
-							scope.changeStatus = function(){
+							scope.toggle = function(){
 								scope.isOpen = !scope.isOpen;
 								kittencupGroupCtrl.closeOtherCollapse(scope);
 							};
